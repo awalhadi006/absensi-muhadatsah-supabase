@@ -140,6 +140,11 @@
                 <i class="fa-solid fa-list-check text-3xl"></i><span class="font-bold text-sm">Manual & Bulk</span>
             </button>
         </div>
+
+        <!-- Tambahan Tombol Rekapan -->
+        <button onclick="showRekap()" class="btn btn-info bg-blue-500 hover:bg-blue-600 text-white w-full mb-4 border-0 shadow-md rounded-2xl flex items-center justify-center gap-2">
+            <i class="fa-solid fa-clipboard-list text-xl"></i><span class="font-bold text-sm">Lihat Rekapan Guru</span>
+        </button>
         
         <div class="grid grid-cols-4 gap-2 mb-4 text-center">
             <div class="bg-base-100 rounded-xl p-2 border border-base-300 shadow-sm"><div class="text-xl font-bold text-success" id="statHadir">0</div><div class="text-[10px] opacity-70">Hadir</div></div>
@@ -213,6 +218,26 @@
                     <option value="Alfa">Alfa</option>
                 </select>
                 <button onclick="submitBulk()" id="btnBulk" class="btn btn-success bg-emerald-500 hover:bg-emerald-600 text-white shadow-md border-0 w-full">Kirim Data Terpilih</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIEW BARU: REKAPAN GURU -->
+    <div id="rekapView" class="w-full max-w-md flex-1 flex flex-col hide pt-4 pb-4 px-4 fade-in">
+        <div class="card bg-base-100 shadow-xl flex-1 flex flex-col overflow-hidden border border-base-300">
+            <!-- Header Halaman -->
+            <div class="p-4 border-b border-base-300 flex items-center justify-center bg-base-200 relative">
+                <!-- Tombol kembali menggunakan fungsi goBack() bawaan aplikasi -->
+                <button onclick="goBack()" class="btn btn-sm btn-ghost btn-circle absolute left-2"><i class="fa-solid fa-arrow-left text-lg"></i></button>
+                <h2 class="font-bold text-lg">Rekapan Absensi</h2>
+            </div>
+            
+            <!-- Tempat Data Akan Ditampilkan -->
+            <div class="flex-1 overflow-y-auto p-4 bg-base-100 space-y-3" id="rekapContainer">
+                <div class="text-center text-sm opacity-50 mt-10">
+                    <span class="loading loading-spinner loading-md mb-2"></span><br>
+                    Memuat data rekapan...
+                </div>
             </div>
         </div>
     </div>
@@ -450,7 +475,8 @@
         }
 
         function renderView(id) {
-            ['loginView', 'dashboardView', 'scannerView', 'manualView'].forEach(v => document.getElementById(v).classList.add('hide'));
+            // Tambahkan 'rekapView' ke dalam array ini
+            ['loginView', 'dashboardView', 'scannerView', 'manualView', 'rekapView'].forEach(v => document.getElementById(v).classList.add('hide'));
             document.getElementById(id).classList.remove('hide');
             
             if(id === 'dashboardView') {
@@ -715,6 +741,24 @@
         function showManual() {
             showView('manualView');
             renderChecklist();
+        }
+
+        function showRekap() {
+            // Mendorong state baru ke history HP agar tombol back Android berfungsi
+            showView('rekapView');
+            renderRekapData();
+        }
+
+        function renderRekapData() {
+            const cont = document.getElementById('rekapContainer');
+            // Untuk sementara, tampilkan pesan statis. 
+            // Nanti kita isi dengan logika Supabase berdasarkan jawaban Abang.
+            cont.innerHTML = `
+                <div class="alert alert-info text-sm shadow-sm">
+                    <i class="fa-solid fa-circle-info"></i>
+                    <span>Tampilan rekapan siap! Menunggu logika data.</span>
+                </div>
+            `;
         }
 
         function renderChecklist(filterText = "") {
