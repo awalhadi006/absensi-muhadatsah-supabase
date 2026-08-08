@@ -1,8 +1,9 @@
 // ==========================================
 // 1. STATE & VARIABEL GLOBAL
+// (Sangat penting ditaruh paling atas agar terbaca oleh api.js)
 // ==========================================
 let globalAdminName = "Admin";
-let dbTeachers = [];
+let dbTeachers = []; // Variabel yang tadinya error not defined
 let todayRecords = [];
 let isOnline = navigator.onLine;
 let html5QrcodeScanner;
@@ -185,7 +186,7 @@ window.addEventListener('offline', () => { isOnline = false; updateNetworkUI(); 
 async function updateNetworkUI() {
     const ind = document.getElementById('networkIndicator');
     const cnt = document.getElementById('offlineCount');
-    if(!ind || !cnt) return;
+    if(!ind || !cnt) return; // Mencegah error jika dipanggil sebelum DOM siap
 
     const offData = await getOffline();
     if(isOnline) {
@@ -210,7 +211,7 @@ async function forceSync() {
     showToast(`Mensinkronkan ${pendings.length} data...`, 'warning');
     try {
         const cleanPayloads = pendings.map(p => ({nama: p.nama, status: p.status, alasan: p.alasan, adminName: p.adminName, offlineTimestamp: p.offlineTimestamp, waktu: p.waktu}));
-        // Memanggil fungsi api.js
+        // Memanggil fungsi dari api.js
         const res = await callAPI('submitAttendance', cleanPayloads);
         
         if(res.success) {
@@ -250,7 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const btn = document.getElementById('btnLogin');
             btn.disabled = true; document.getElementById('loginLoader').classList.remove('hide');
             try {
-                // Memanggil api.js
+                // Memanggil fungsi dari api.js
                 const res = await callAPI('login', { username: document.getElementById('username').value, password: document.getElementById('password').value });
                 if (res.success) {
                     localStorage.setItem('absen_admin_name', res.user);

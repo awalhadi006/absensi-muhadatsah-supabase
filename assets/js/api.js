@@ -1,11 +1,13 @@
-// assets/js/api.js
-
-// Inisialisasi Supabase
+// ==========================================
+// KONFIGURASI SUPABASE
+// ==========================================
 const SUPABASE_URL = 'https://vmkhvgpxdsfuaaorlhhu.supabase.co'; 
 const SUPABASE_KEY = 'sb_publishable_MQK8pGpvQ-A3Ld_qjX4akw__FIhoD_h'; 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// Fungsi sentral untuk menembak ke Supabase
+// ==========================================
+// FUNGSI UTAMA KOMUNIKASI DATABASE
+// ==========================================
 async function callAPI(action, payload) {
     try {
         if (action === 'login') {
@@ -44,14 +46,38 @@ async function callAPI(action, payload) {
             return { success: true, data: formattedData };
         } 
         
+        else if (action === 'getRekap') {
+            let query = supabaseClient.from('absensi').select('nama, status, alasan');
+            
+            if (payload.startDate) {
+                query = query.gte('waktu', payload.startDate + 'T00:00:00.000Z');
+            }
+            if (payload.endDate) {
+                query = query.lte('waktu', payload.endDate + 'T23:59:59.999Z');
+            }
+            
+            const { data, error } = await query;
+            if (error) throw error;
+            
+            return { success: true, data: data };
+        }
+
         else if (action === 'submitAttendance') {
             const payloadArray = Array.isArray(payload) ? payload : [payload];
+            
             const insertData = payloadArray.map(p => {
-                const guru = dbTeachers.find(g => g.nama === p.nama);
+                // Perbaikan: dbTeachers sekarang dipastikan sudah terbaca dari app.js
+                // Tapi kita kasih fallback agar tidak error jika dbTeachers belum siap
+                let keteranganGuru = "-";
+                if(typeof dbTeachers !== 'undefined') {
+                    const guru = dbTeachers.find(g => g.nama === p.nama);
+                    if(guru) keteranganGuru = guru.keterangan;
+                }
+
                 return {
                     waktu: p.offlineTimestamp ? new Date(p.offlineTimestamp).toISOString() : new Date().toISOString(),
                     nama: p.nama,
-                    keterangan: guru ? guru.keterangan : "-",
+                    keterangan: keteranganGuru,
                     status: p.status,
                     alasan: p.status === "Hadir" ? "" : (p.alasan || "Alfa"),
                     admin_name: p.adminName
