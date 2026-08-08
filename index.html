@@ -1,17 +1,20 @@
 <!DOCTYPE html>
 <html lang="id" data-theme="dark">
+
 <head>
     <meta charset="UTF-8">
     <!-- Meta Viewport untuk WebView / PWA / Android -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#1f2937">
-    
+
     <title>Absensi Guru</title>
     <link rel="icon" href="logo.png" type="image/png">
-    
+    <link rel="stylesheet" href="assets/css/style.css">
+
     <!-- CSS & Libraries -->
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.7.2/dist/full.min.css" rel="stylesheet" type="text/css" />
     <script src="https://cdn.tailwindcss.com"></script>
@@ -19,27 +22,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/html5-qrcode"></script>
 
-    <style>
-        /* Mengunci background agar tidak rubber-banding (mantul) */
-        html, body { min-height: 100%; }
-        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
-        .hide { display: none !important; }
-        
-        /* Modifikasi warna khusus HANYA untuk siku/bracket di dalam kotak scan */
-        #reader { width: 100%; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-        .scan-success #reader__scan_region div { border-color: #10b981 !important; transition: border-color 0.3s ease; }
-        .scan-error #reader__scan_region div { border-color: #f87171 !important; transition: border-color 0.3s ease; }
-        .scan-warning #reader__scan_region div { border-color: #fbbf24 !important; transition: border-color 0.3s ease; }
-
-        /* Container scrolling */
-        .list-guru-container { max-height: calc(100dvh - 420px); overflow-y: auto; }
-        #checklistContainer { max-height: calc(100dvh - 380px); overflow-y: auto; overscroll-behavior-y: contain; }
-
-        /* Optimasi GPU animasi */
-        .fade-in { animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1); will-change: opacity, transform; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-    </style>
-    
     <script>
         function initTheme() {
             const savedTheme = localStorage.getItem('absen_theme');
@@ -47,7 +29,7 @@
             const theme = savedTheme || (prefersDark ? 'dark' : 'light');
             document.documentElement.setAttribute('data-theme', theme);
             const metaThemeColor = document.querySelector("meta[name=theme-color]");
-            if(metaThemeColor) metaThemeColor.setAttribute("content", theme === 'dark' ? "#1f2937" : "#f8fafc");
+            if (metaThemeColor) metaThemeColor.setAttribute("content", theme === 'dark' ? "#1f2937" : "#f8fafc");
             window.addEventListener('DOMContentLoaded', () => updateThemeIcon(theme));
         }
         function toggleTheme() {
@@ -56,17 +38,19 @@
             document.documentElement.setAttribute('data-theme', newTheme);
             localStorage.setItem('absen_theme', newTheme);
             const metaThemeColor = document.querySelector("meta[name=theme-color]");
-            if(metaThemeColor) metaThemeColor.setAttribute("content", newTheme === 'dark' ? "#1f2937" : "#f8fafc");
+            if (metaThemeColor) metaThemeColor.setAttribute("content", newTheme === 'dark' ? "#1f2937" : "#f8fafc");
             updateThemeIcon(newTheme);
         }
         function updateThemeIcon(theme) {
             const icon = document.getElementById('theme-icon');
-            if(icon) icon.className = theme === 'dark' ? 'fa-solid fa-sun text-xl opacity-70' : 'fa-solid fa-moon text-xl opacity-70';
+            if (icon) icon.className = theme === 'dark' ? 'fa-solid fa-sun text-xl opacity-70' : 'fa-solid fa-moon text-xl opacity-70';
         }
         initTheme();
     </script>
 </head>
-<body class="bg-base-200 text-base-content antialiased min-h-[100dvh] flex flex-col items-center transition-colors duration-300 relative">
+
+<body
+    class="bg-base-200 text-base-content antialiased min-h-[100dvh] flex flex-col items-center transition-colors duration-300 relative">
 
     <button onclick="toggleTheme()" class="btn btn-circle btn-ghost absolute top-2 right-2 z-50">
         <i id="theme-icon" class="fa-solid fa-moon text-xl opacity-70"></i>
@@ -86,8 +70,10 @@
         <div class="card-body">
             <div class="text-center mb-4 flex flex-col items-center">
                 <div class="avatar mb-4">
-                    <div class="w-24 h-24 rounded-full bg-base-200 shadow-sm p-1 border border-base-300 flex items-center justify-center overflow-hidden">
-                        <img src="logo.png" alt="Logo" class="object-contain w-full h-full" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=BA&background=10b981&color=fff';" />
+                    <div
+                        class="w-24 h-24 rounded-full bg-base-200 shadow-sm p-1 border border-base-300 flex items-center justify-center overflow-hidden">
+                        <img src="logo.png" alt="Logo" class="object-contain w-full h-full"
+                            onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=BA&background=10b981&color=fff';" />
                     </div>
                 </div>
                 <h1 class="text-2xl font-bold">Sistem Absensi</h1>
@@ -96,22 +82,27 @@
 
             <form id="loginForm" class="space-y-4">
                 <div class="form-control">
-                    <label class="input input-bordered bg-base-200 focus-within:border-success focus-within:ring-1 focus-within:ring-success flex items-center gap-3 transition-colors">
+                    <label
+                        class="input input-bordered bg-base-200 focus-within:border-success focus-within:ring-1 focus-within:ring-success flex items-center gap-3 transition-colors">
                         <i class="fa-solid fa-user opacity-50"></i>
                         <input type="text" id="username" class="grow bg-transparent" placeholder="Username" required />
                     </label>
                 </div>
                 <!-- FITUR MATA (EYE ICON) PASSWORD -->
                 <div class="form-control relative">
-                    <label class="input input-bordered bg-base-200 focus-within:border-success focus-within:ring-1 focus-within:ring-success flex items-center gap-3 pr-10 transition-colors">
+                    <label
+                        class="input input-bordered bg-base-200 focus-within:border-success focus-within:ring-1 focus-within:ring-success flex items-center gap-3 pr-10 transition-colors">
                         <i class="fa-solid fa-lock opacity-50"></i>
-                        <input type="password" id="password" class="grow bg-transparent" placeholder="Password" required />
+                        <input type="password" id="password" class="grow bg-transparent" placeholder="Password"
+                            required />
                     </label>
-                    <button type="button" onclick="togglePassword()" class="absolute right-3 top-1/2 -translate-y-1/2 opacity-50 hover:opacity-100 p-2 cursor-pointer text-base-content">
+                    <button type="button" onclick="togglePassword()"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 opacity-50 hover:opacity-100 p-2 cursor-pointer text-base-content">
                         <i id="eyeIcon" class="fa-solid fa-eye"></i>
                     </button>
                 </div>
-                <button type="submit" id="btnLogin" class="btn btn-success bg-emerald-500 hover:bg-emerald-600 w-full mt-4 text-white border-0 shadow-md">
+                <button type="submit" id="btnLogin"
+                    class="btn btn-success bg-emerald-500 hover:bg-emerald-600 w-full mt-4 text-white border-0 shadow-md">
                     <span>Masuk</span><span id="loginLoader" class="loading loading-spinner loading-sm hide"></span>
                 </button>
             </form>
@@ -119,38 +110,57 @@
     </div>
 
     <div id="dashboardView" class="w-full max-w-md flex-1 flex flex-col hide pt-12 pb-4 px-4 fade-in">
-        <div class="flex justify-between items-center bg-base-100 p-4 rounded-2xl shadow-sm mb-4 border border-base-300">
+        <div
+            class="flex justify-between items-center bg-base-100 p-4 rounded-2xl shadow-sm mb-4 border border-base-300">
             <div>
                 <p class="text-[10px] opacity-70 uppercase tracking-wider font-bold">Petugas Aktif</p>
                 <h2 id="userNameDisplay" class="text-base font-bold text-success leading-tight">Admin</h2>
             </div>
             <div class="flex gap-2 items-center">
-                <div id="networkIndicator" class="badge badge-success bg-emerald-500 gap-1 text-white text-xs border-0 py-3 shadow-sm cursor-pointer" onclick="forceSync()">
+                <div id="networkIndicator"
+                    class="badge badge-success bg-emerald-500 gap-1 text-white text-xs border-0 py-3 shadow-sm cursor-pointer"
+                    onclick="forceSync()">
                     <i class="fa-solid fa-wifi"></i> <span id="offlineCount">Online</span>
                 </div>
-                <button onclick="logout()" class="btn btn-square btn-error btn-outline btn-sm shadow-sm"><i class="fa-solid fa-right-from-bracket"></i></button>
+                <button onclick="logout()" class="btn btn-square btn-error btn-outline btn-sm shadow-sm"><i
+                        class="fa-solid fa-right-from-bracket"></i></button>
             </div>
         </div>
 
         <div class="grid grid-cols-2 gap-3 mb-4">
-            <button onclick="showScanner()" class="btn btn-success bg-emerald-500 hover:bg-emerald-600 h-auto py-5 flex flex-col gap-2 rounded-2xl shadow-md border-0 text-white">
+            <button onclick="showScanner()"
+                class="btn btn-success bg-emerald-500 hover:bg-emerald-600 h-auto py-5 flex flex-col gap-2 rounded-2xl shadow-md border-0 text-white">
                 <i class="fa-solid fa-qrcode text-3xl"></i><span class="font-bold text-sm">Scan QR</span>
             </button>
-            <button onclick="showManual()" class="btn h-auto py-5 flex flex-col gap-2 rounded-2xl shadow-sm bg-base-100 border-2 border-base-300 hover:border-success hover:bg-success hover:text-white transition-all text-base-content">
+            <button onclick="showManual()"
+                class="btn h-auto py-5 flex flex-col gap-2 rounded-2xl shadow-sm bg-base-100 border-2 border-base-300 hover:border-success hover:bg-success hover:text-white transition-all text-base-content">
                 <i class="fa-solid fa-list-check text-3xl"></i><span class="font-bold text-sm">Manual & Bulk</span>
             </button>
         </div>
 
         <!-- Tambahan Tombol Rekapan -->
-        <button onclick="showRekap()" class="btn btn-info bg-blue-500 hover:bg-blue-600 text-white w-full mb-4 border-0 shadow-md rounded-2xl flex items-center justify-center gap-2">
+        <button onclick="showRekap()"
+            class="btn btn-info bg-blue-500 hover:bg-blue-600 text-white w-full mb-4 border-0 shadow-md rounded-2xl flex items-center justify-center gap-2">
             <i class="fa-solid fa-clipboard-list text-xl"></i><span class="font-bold text-sm">Lihat Rekapan Guru</span>
         </button>
-        
+
         <div class="grid grid-cols-4 gap-2 mb-4 text-center">
-            <div class="bg-base-100 rounded-xl p-2 border border-base-300 shadow-sm"><div class="text-xl font-bold text-success" id="statHadir">0</div><div class="text-[10px] opacity-70">Hadir</div></div>
-            <div class="bg-base-100 rounded-xl p-2 border border-base-300 shadow-sm"><div class="text-xl font-bold text-info" id="statIzin">0</div><div class="text-[10px] opacity-70">Izin</div></div>
-            <div class="bg-base-100 rounded-xl p-2 border border-base-300 shadow-sm"><div class="text-xl font-bold text-warning" id="statSakit">0</div><div class="text-[10px] opacity-70">Sakit</div></div>
-            <div class="bg-base-100 rounded-xl p-2 border border-base-300 shadow-sm"><div class="text-xl font-bold text-error" id="statAlfa">0</div><div class="text-[10px] opacity-70">Alfa</div></div>
+            <div class="bg-base-100 rounded-xl p-2 border border-base-300 shadow-sm">
+                <div class="text-xl font-bold text-success" id="statHadir">0</div>
+                <div class="text-[10px] opacity-70">Hadir</div>
+            </div>
+            <div class="bg-base-100 rounded-xl p-2 border border-base-300 shadow-sm">
+                <div class="text-xl font-bold text-info" id="statIzin">0</div>
+                <div class="text-[10px] opacity-70">Izin</div>
+            </div>
+            <div class="bg-base-100 rounded-xl p-2 border border-base-300 shadow-sm">
+                <div class="text-xl font-bold text-warning" id="statSakit">0</div>
+                <div class="text-[10px] opacity-70">Sakit</div>
+            </div>
+            <div class="bg-base-100 rounded-xl p-2 border border-base-300 shadow-sm">
+                <div class="text-xl font-bold text-error" id="statAlfa">0</div>
+                <div class="text-[10px] opacity-70">Alfa</div>
+            </div>
         </div>
 
         <div class="card bg-base-100 shadow-sm flex-1 border border-base-300 overflow-hidden flex flex-col">
@@ -161,7 +171,8 @@
                 </div>
             </div>
             <div id="smartListContainer" class="list-guru-container p-2 space-y-2 relative min-h-[150px]">
-                <div class="flex items-center justify-center h-full w-full text-xs opacity-50 absolute inset-0"><span class="loading loading-spinner loading-md mr-2"></span> Memuat server...</div>
+                <div class="flex items-center justify-center h-full w-full text-xs opacity-50 absolute inset-0"><span
+                        class="loading loading-spinner loading-md mr-2"></span> Memuat server...</div>
             </div>
         </div>
     </div>
@@ -174,7 +185,8 @@
                     <div id="reader" class="w-full relative"></div>
                 </div>
                 <p class="text-xs text-center opacity-70 mb-4">Kamera siap. Arahkan ke QR Code.</p>
-                <button onclick="stopScanner(); goBack()" class="btn btn-error text-white w-full border-0 shadow-md"><i class="fa-solid fa-times mr-2"></i> Tutup Scanner</button>
+                <button onclick="stopScanner(); goBack()" class="btn btn-error text-white w-full border-0 shadow-md"><i
+                        class="fa-solid fa-times mr-2"></i> Tutup Scanner</button>
             </div>
         </div>
     </div>
@@ -182,42 +194,63 @@
     <div id="manualView" class="w-full max-w-md flex-1 flex flex-col hide pt-4 pb-4 px-4 fade-in">
         <div class="card bg-base-100 shadow-xl flex-1 flex flex-col overflow-hidden border border-base-300">
             <div class="p-4 border-b border-base-300 flex items-center justify-center bg-base-200 relative">
-                <button onclick="goBack()" class="btn btn-sm btn-ghost btn-circle absolute left-2"><i class="fa-solid fa-arrow-left text-lg"></i></button>
+                <button onclick="goBack()" class="btn btn-sm btn-ghost btn-circle absolute left-2"><i
+                        class="fa-solid fa-arrow-left text-lg"></i></button>
                 <h2 class="font-bold text-lg">Input Manual</h2>
             </div>
 
             <div class="p-3 border-b border-base-300 space-y-3 bg-base-100">
                 <div class="flex flex-wrap gap-2 items-center">
-                    <button type="button" onclick="toggleFilter('ikhwan', this)" class="btn btn-xs btn-outline border-base-300 rounded-full filter-btn">Ikhwan</button>
-                    <button type="button" onclick="toggleFilter('akhwat', this)" class="btn btn-xs btn-outline border-base-300 rounded-full filter-btn">Akhwat</button>
-                    <button type="button" onclick="toggleFilter('ust', this)" class="btn btn-xs btn-outline border-base-300 rounded-full filter-btn">Ust</button>
-                    <button type="button" onclick="toggleFilter('usth', this)" class="btn btn-xs btn-outline border-base-300 rounded-full filter-btn">Usth</button>
-                    <button type="button" onclick="toggleFilter('akh', this)" class="btn btn-xs btn-outline border-base-300 rounded-full filter-btn">Akh</button>
-                    <button type="button" onclick="toggleFilter('ukh', this)" class="btn btn-xs btn-outline border-base-300 rounded-full filter-btn">Ukh</button>
-                    <button type="button" onclick="filterSelect('clear')" class="btn btn-xs btn-error text-white border-0 shadow-sm rounded-full ml-auto">Reset</button>
+                    <button type="button" onclick="toggleFilter('ikhwan', this)"
+                        class="btn btn-xs btn-outline border-base-300 rounded-full filter-btn">Ikhwan</button>
+                    <button type="button" onclick="toggleFilter('akhwat', this)"
+                        class="btn btn-xs btn-outline border-base-300 rounded-full filter-btn">Akhwat</button>
+                    <button type="button" onclick="toggleFilter('ust', this)"
+                        class="btn btn-xs btn-outline border-base-300 rounded-full filter-btn">Ust</button>
+                    <button type="button" onclick="toggleFilter('usth', this)"
+                        class="btn btn-xs btn-outline border-base-300 rounded-full filter-btn">Usth</button>
+                    <button type="button" onclick="toggleFilter('akh', this)"
+                        class="btn btn-xs btn-outline border-base-300 rounded-full filter-btn">Akh</button>
+                    <button type="button" onclick="toggleFilter('ukh', this)"
+                        class="btn btn-xs btn-outline border-base-300 rounded-full filter-btn">Ukh</button>
+                    <button type="button" onclick="filterSelect('clear')"
+                        class="btn btn-xs btn-error text-white border-0 shadow-sm rounded-full ml-auto">Reset</button>
                 </div>
-                <input type="text" id="searchManual" oninput="searchChecklist()" class="input input-sm input-bordered bg-base-200 focus:border-success focus:ring-1 focus:ring-success w-full transition-colors" placeholder="Cari nama manual...">
+                <input type="text" id="searchManual" oninput="searchChecklist()"
+                    class="input input-sm input-bordered bg-base-200 focus:border-success focus:ring-1 focus:ring-success w-full transition-colors"
+                    placeholder="Cari nama manual...">
             </div>
 
             <div class="flex-1 overflow-y-auto p-2 bg-base-100" id="checklistContainer">
-                <div class="text-center text-xs opacity-50 mt-4"><span class="loading loading-spinner loading-xs"></span> Memuat daftar guru...</div>
+                <div class="text-center text-xs opacity-50 mt-4"><span
+                        class="loading loading-spinner loading-xs"></span> Memuat daftar guru...</div>
             </div>
 
             <div class="p-4 bg-base-200 border-t border-base-300">
                 <div class="flex items-center gap-2 mb-3">
-                    <span class="text-sm font-semibold opacity-70">Terpilih: <span id="selectedCount" class="text-success font-bold">0</span></span>
+                    <span class="text-sm font-semibold opacity-70">Terpilih: <span id="selectedCount"
+                            class="text-success font-bold">0</span></span>
                 </div>
                 <div class="grid grid-cols-2 gap-2 mb-2">
-                    <label class="flex items-center gap-2 bg-base-100 p-2 border border-base-300 rounded cursor-pointer hover:border-success transition-colors"><input type="radio" name="bulkStatus" value="Hadir" class="radio radio-success radio-sm" checked onchange="toggleBulkAlasan()"> <span class="text-sm font-medium">Hadir</span></label>
-                    <label class="flex items-center gap-2 bg-base-100 p-2 border border-base-300 rounded cursor-pointer hover:border-error transition-colors"><input type="radio" name="bulkStatus" value="Tidak Hadir" class="radio radio-error radio-sm" onchange="toggleBulkAlasan()"> <span class="text-sm font-medium">Absen</span></label>
+                    <label
+                        class="flex items-center gap-2 bg-base-100 p-2 border border-base-300 rounded cursor-pointer hover:border-success transition-colors"><input
+                            type="radio" name="bulkStatus" value="Hadir" class="radio radio-success radio-sm" checked
+                            onchange="toggleBulkAlasan()"> <span class="text-sm font-medium">Hadir</span></label>
+                    <label
+                        class="flex items-center gap-2 bg-base-100 p-2 border border-base-300 rounded cursor-pointer hover:border-error transition-colors"><input
+                            type="radio" name="bulkStatus" value="Tidak Hadir" class="radio radio-error radio-sm"
+                            onchange="toggleBulkAlasan()"> <span class="text-sm font-medium">Absen</span></label>
                 </div>
-                <select id="bulkAlasan" class="select select-bordered select-error select-sm w-full mb-3 hide text-sm bg-base-100">
+                <select id="bulkAlasan"
+                    class="select select-bordered select-error select-sm w-full mb-3 hide text-sm bg-base-100">
                     <option value="" disabled selected>Pilih Alasan Absen</option>
                     <option value="Sakit">Sakit</option>
                     <option value="Izin">Izin</option>
                     <option value="Alfa">Alfa</option>
                 </select>
-                <button onclick="submitBulk()" id="btnBulk" class="btn btn-success bg-emerald-500 hover:bg-emerald-600 text-white shadow-md border-0 w-full">Kirim Data Terpilih</button>
+                <button onclick="submitBulk()" id="btnBulk"
+                    class="btn btn-success bg-emerald-500 hover:bg-emerald-600 text-white shadow-md border-0 w-full">Kirim
+                    Data Terpilih</button>
             </div>
         </div>
     </div>
@@ -228,10 +261,11 @@
             <!-- Header Halaman -->
             <div class="p-4 border-b border-base-300 flex items-center justify-center bg-base-200 relative">
                 <!-- Tombol kembali menggunakan fungsi goBack() bawaan aplikasi -->
-                <button onclick="goBack()" class="btn btn-sm btn-ghost btn-circle absolute left-2"><i class="fa-solid fa-arrow-left text-lg"></i></button>
+                <button onclick="goBack()" class="btn btn-sm btn-ghost btn-circle absolute left-2"><i
+                        class="fa-solid fa-arrow-left text-lg"></i></button>
                 <h2 class="font-bold text-lg">Rekapan Absensi</h2>
             </div>
-            
+
             <!-- Tempat Data Akan Ditampilkan -->
             <div class="flex-1 overflow-y-auto p-4 bg-base-100 space-y-3" id="rekapContainer">
                 <div class="text-center text-sm opacity-50 mt-10">
@@ -246,99 +280,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script>
-        // 1. Inisialisasi Supabase
-    // TODO: Ganti URL dan KEY di bawah ini dengan milik Abang dari dashboard Supabase (Settings > API)
-    const SUPABASE_URL = 'https://vmkhvgpxdsfuaaorlhhu.supabase.co'; 
-    const SUPABASE_KEY = 'sb_publishable_MQK8pGpvQ-A3Ld_qjX4akw__FIhoD_h'; // Gunakan anon/public key
-
-    // UBAH NAMA VARIABELNYA DI SINI MENJADI supabaseClient
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-    let globalAdminName = "Admin";
-    let dbTeachers = [];
-    let todayRecords = [];
-    let isOnline = navigator.onLine;
-
-    async function callAPI(action, payload) {
-        try {
-            if (action === 'login') {
-                // GUNAKAN supabaseClient di sini
-                const { data, error } = await supabaseClient
-                    .from('akun')
-                    .select('*')
-                    .eq('username', payload.username)
-                    .eq('password', payload.password)
-                    .single(); 
-
-                if (error || !data) return { success: false, message: "Username atau Password salah!" };
-                return { success: true, user: data.nama_admin };
-            } 
-            
-            else if (action === 'getTeachers') {
-                // GUNAKAN supabaseClient di sini
-                const { data, error } = await supabaseClient
-                    .from('guru')
-                    .select('nama, keterangan');
-                
-                if (error) throw error;
-                return { success: true, data: data };
-            } 
-            
-            else if (action === 'getTodayAttendance') {
-                const today = new Date();
-                today.setHours(0, 0, 0, 0); 
-                const startOfDay = today.toISOString();
-                
-                // GUNAKAN supabaseClient di sini
-                const { data, error } = await supabaseClient
-                    .from('absensi')
-                    .select('*')
-                    .gte('waktu', startOfDay); 
-
-                if (error) throw error;
-                
-                const formattedData = data.map(item => ({
-                    waktu: new Date(item.waktu).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
-                    nama: item.nama,
-                    status: item.status,
-                    alasan: item.alasan || "",
-                    petugas: item.admin_name
-                }));
-
-                return { success: true, data: formattedData };
-            } 
-            
-            else if (action === 'submitAttendance') {
-                const payloadArray = Array.isArray(payload) ? payload : [payload];
-                
-                const insertData = payloadArray.map(p => {
-                    const guru = dbTeachers.find(g => g.nama === p.nama);
-                    
-                    return {
-                        waktu: p.offlineTimestamp ? new Date(p.offlineTimestamp).toISOString() : new Date().toISOString(),
-                        nama: p.nama,
-                        keterangan: guru ? guru.keterangan : "-",
-                        status: p.status,
-                        alasan: p.status === "Hadir" ? "" : (p.alasan || "Alfa"),
-                        admin_name: p.adminName
-                    };
-                });
-
-                // GUNAKAN supabaseClient di sini
-                const { error } = await supabaseClient
-                    .from('absensi')
-                    .insert(insertData);
-
-                if (error) throw error;
-                return { success: true, message: `Berhasil menyimpan data absensi.` };
-            }
-
-        } catch (error) {
-            console.error("Supabase Error:", error);
-            throw new Error("Gagal terhubung ke database.");
-        }
-    }
-
         // Toggles the eye icon on password field
         function togglePassword() {
             const pwd = document.getElementById('password');
@@ -365,7 +306,7 @@
                 let request = indexedDB.open(dbName, 1);
                 request.onupgradeneeded = (e) => {
                     let db = e.target.result;
-                    if(!db.objectStoreNames.contains('pending')) db.createObjectStore('pending', { keyPath: 'id', autoIncrement: true });
+                    if (!db.objectStoreNames.contains('pending')) db.createObjectStore('pending', { keyPath: 'id', autoIncrement: true });
                 };
                 request.onsuccess = () => resolve(request.result);
                 request.onerror = () => reject(request.error);
@@ -375,9 +316,9 @@
             const db = await getDB();
             const tx = db.transaction('pending', 'readwrite');
             const store = tx.objectStore('pending');
-            payloads.forEach(p => { 
-                p.offlineTimestamp = new Date().toISOString(); 
-                store.add(p); 
+            payloads.forEach(p => {
+                p.offlineTimestamp = new Date().toISOString();
+                store.add(p);
             });
             return new Promise(res => tx.oncomplete = res);
         }
@@ -402,8 +343,8 @@
             const ind = document.getElementById('networkIndicator');
             const cnt = document.getElementById('offlineCount');
             const offData = await getOffline();
-            if(isOnline) {
-                if(offData.length > 0) {
+            if (isOnline) {
+                if (offData.length > 0) {
                     ind.className = "badge badge-warning gap-1 text-white text-xs border-0 py-3 shadow-sm cursor-pointer";
                     cnt.innerText = `Sync ${offData.length} data...`;
                 } else {
@@ -417,16 +358,16 @@
         }
 
         async function forceSync() {
-            if(!isOnline) return;
+            if (!isOnline) return;
             const pendings = await getOffline();
-            if(pendings.length === 0) return updateNetworkUI();
+            if (pendings.length === 0) return updateNetworkUI();
 
             showToast(`Mensinkronkan ${pendings.length} data...`, 'warning');
             try {
-                const cleanPayloads = pendings.map(p => ({nama: p.nama, status: p.status, alasan: p.alasan, adminName: p.adminName, offlineTimestamp: p.offlineTimestamp, waktu: p.waktu}));
+                const cleanPayloads = pendings.map(p => ({ nama: p.nama, status: p.status, alasan: p.alasan, adminName: p.adminName, offlineTimestamp: p.offlineTimestamp, waktu: p.waktu }));
                 const res = await callAPI('submitAttendance', cleanPayloads);
-                
-                if(res.success) {
+
+                if (res.success) {
                     await clearOffline();
                     showToast('Data offline berhasil diupload!', 'success');
                     silentFetchDashboard();
@@ -439,21 +380,21 @@
             const modal = document.getElementById('globalModal');
             document.getElementById('modalTitle').innerText = title;
             document.getElementById('modalMessage').innerText = msg;
-            
+
             const btnClass = isError ? 'btn-error bg-red-500 hover:bg-red-600' : 'btn-success bg-emerald-500 hover:bg-emerald-600';
-            
-            if(onConfirm) {
+
+            if (onConfirm) {
                 document.getElementById('modalActions').innerHTML = `
                     <button id="btnCM" class="btn btn-outline flex-1 border-2 border-base-300">Batal</button>
                     <button id="btnOM" class="btn ${btnClass} border-0 text-white shadow-md flex-1">Ya</button>`;
-                
-                document.getElementById('btnCM').onclick = () => { modal.close(); if(onCancel) onCancel(); };
+
+                document.getElementById('btnCM').onclick = () => { modal.close(); if (onCancel) onCancel(); };
                 document.getElementById('btnOM').onclick = () => { modal.close(); onConfirm(); };
             } else {
                 document.getElementById('modalActions').innerHTML = `<button onclick="document.getElementById('globalModal').close(); if(${onCancel !== null}) { ${onCancel}(); }" class="btn ${btnClass} border-0 text-white shadow-md w-full">OK</button>`;
             }
-            
-            document.getElementById('modalBackdropBtn').onclick = () => { if(onCancel) onCancel(); }
+
+            document.getElementById('modalBackdropBtn').onclick = () => { if (onCancel) onCancel(); }
             modal.showModal();
         }
 
@@ -462,15 +403,15 @@
             cont.classList.remove('hide');
             const colors = { success: 'alert-success bg-emerald-500 text-white', error: 'alert-error bg-red-500 text-white', warning: 'alert-warning bg-yellow-500 text-white' };
             const icons = { success: 'fa-check-circle', error: 'fa-triangle-exclamation', warning: 'fa-sync' };
-            
+
             const t = document.createElement('div');
             t.className = `alert ${colors[type]} shadow-xl mb-2 py-2 px-4 transition-all opacity-100 border-0 font-bold`;
             t.innerHTML = `<span class="text-sm"><i class="fa-solid ${icons[type]} mr-2"></i>${msg}</span>`;
-            
+
             cont.appendChild(t);
             setTimeout(() => {
                 t.style.opacity = '0';
-                setTimeout(() => { t.remove(); if(cont.children.length === 0) cont.classList.add('hide'); }, 300);
+                setTimeout(() => { t.remove(); if (cont.children.length === 0) cont.classList.add('hide'); }, 300);
             }, 2500);
         }
 
@@ -478,15 +419,15 @@
             // Tambahkan 'rekapView' ke dalam array ini
             ['loginView', 'dashboardView', 'scannerView', 'manualView', 'rekapView'].forEach(v => document.getElementById(v).classList.add('hide'));
             document.getElementById(id).classList.remove('hide');
-            
-            if(id === 'dashboardView') {
-                renderSmartList(); 
-                silentFetchDashboard(); 
+
+            if (id === 'dashboardView') {
+                renderSmartList();
+                silentFetchDashboard();
             }
         }
 
         function showView(id) {
-            history.pushState({view: id}, '', '#' + id);
+            history.pushState({ view: id }, '', '#' + id);
             renderView(id);
         }
 
@@ -496,9 +437,9 @@
 
         // Tangkap event Swipe Back di HP Android agar tidak keluar dari web
         window.addEventListener('popstate', (e) => {
-            if(e.state && e.state.view) {
-                if(e.state.view === 'dashboardView') {
-                    if(html5QrcodeScanner) stopScanner();
+            if (e.state && e.state.view) {
+                if (e.state.view === 'dashboardView') {
+                    if (html5QrcodeScanner) stopScanner();
                     filterSelect('clear'); // Bersihkan saringan saat kembali dari manual
                 }
                 renderView(e.state.view);
@@ -512,19 +453,19 @@
             if (saved) {
                 globalAdminName = saved;
                 document.getElementById('userNameDisplay').innerText = globalAdminName;
-                history.replaceState({view: 'dashboardView'}, '', '#dashboardView');
+                history.replaceState({ view: 'dashboardView' }, '', '#dashboardView');
                 renderView('dashboardView');
                 updateNetworkUI();
             } else {
-                history.replaceState({view: 'loginView'}, '', '#loginView');
+                history.replaceState({ view: 'loginView' }, '', '#loginView');
                 renderView('loginView');
             }
         });
 
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            if(!isOnline) return showModal('Offline', 'Anda butuh internet untuk login.', null, true);
-            
+            if (!isOnline) return showModal('Offline', 'Anda butuh internet untuk login.', null, true);
+
             const btn = document.getElementById('btnLogin');
             btn.disabled = true; document.getElementById('loginLoader').classList.remove('hide');
             try {
@@ -544,47 +485,47 @@
         function logout() {
             showModal('Yakin ingin keluar?', 'Sesi Anda akan dihapus dari perangkat ini.', () => {
                 localStorage.removeItem('absen_admin_name');
-                history.replaceState({view: 'loginView'}, '', '#loginView');
+                history.replaceState({ view: 'loginView' }, '', '#loginView');
                 renderView('loginView');
             });
         }
 
         async function silentFetchDashboard() {
-            if(!isOnline) return;
+            if (!isOnline) return;
             const cont = document.getElementById('smartListContainer');
-            
-            if(dbTeachers.length === 0) {
+
+            if (dbTeachers.length === 0) {
                 cont.innerHTML = '<div class="flex items-center justify-center h-full w-full text-xs opacity-50 absolute inset-0"><span class="loading loading-spinner loading-md mr-2"></span> Memuat server...</div>';
             }
-            
+
             try {
                 const p1 = callAPI('getTeachers', {});
                 const p2 = callAPI('getTodayAttendance', {});
                 const [res1, res2] = await Promise.all([p1, p2]);
-                
-                if(res1.success) dbTeachers = res1.data;
-                if(res2.success) todayRecords = res2.data;
+
+                if (res1.success) dbTeachers = res1.data;
+                if (res2.success) todayRecords = res2.data;
 
                 renderSmartList();
             } catch (e) {
-                if(dbTeachers.length === 0) cont.innerHTML = '<div class="text-xs text-center text-error mt-4 w-full">Gagal memuat. Pastikan online.</div>';
+                if (dbTeachers.length === 0) cont.innerHTML = '<div class="text-xs text-center text-error mt-4 w-full">Gagal memuat. Pastikan online.</div>';
             }
         }
 
         // Helper mengonversi format M/d/yyyy H:mm:ss ke waktu JS untuk sorting
         function parseTime(timeStr) {
-            if(!timeStr || timeStr.includes("Offline")) return new Date(); // Anggap sekarang jika offline
+            if (!timeStr || timeStr.includes("Offline")) return new Date(); // Anggap sekarang jika offline
             const d = new Date(timeStr);
             return isNaN(d.getTime()) ? new Date(0) : d;
         }
 
         function renderSmartList() {
             const cont = document.getElementById('smartListContainer');
-            if(dbTeachers.length === 0) return;
-            
+            if (dbTeachers.length === 0) return;
+
             cont.innerHTML = '';
-            let stats = { h:0, s:0, i:0, a:0, belum:0 };
-            
+            let stats = { h: 0, s: 0, i: 0, a: 0, belum: 0 };
+
             let combined = dbTeachers.map(guru => {
                 let rec = todayRecords.find(r => r.nama === guru.nama);
                 return rec ? { ...guru, done: true, ...rec } : { ...guru, done: false };
@@ -593,16 +534,16 @@
             getOffline().then(pendings => {
                 let offNames = pendings.map(p => p.nama);
                 combined.forEach(item => {
-                    if(offNames.includes(item.nama)) {
-                        let op = pendings.find(p=>p.nama === item.nama);
+                    if (offNames.includes(item.nama)) {
+                        let op = pendings.find(p => p.nama === item.nama);
                         item.done = true; item.status = op.status; item.alasan = op.alasan; item.waktu = "⏳ Offline";
                     }
-                    if(!item.done) stats.belum++;
+                    if (!item.done) stats.belum++;
                     else {
                         let st = item.status.toLowerCase();
-                        if(st === 'hadir') stats.h++;
-                        else if(item.alasan.toLowerCase() === 'izin') stats.i++;
-                        else if(item.alasan.toLowerCase() === 'sakit') stats.s++;
+                        if (st === 'hadir') stats.h++;
+                        else if (item.alasan.toLowerCase() === 'izin') stats.i++;
+                        else if (item.alasan.toLowerCase() === 'sakit') stats.s++;
                         else stats.a++;
                     }
                 });
@@ -614,19 +555,19 @@
                 document.getElementById('statBelum').innerText = `${stats.belum} Belum`;
 
                 // Sorting: Belum absen di atas, yang sudah absen urut berdasarkan Waktu Terbaru
-                combined.sort((a,b) => {
-                    if (a.done !== b.done) return a.done - b.done; 
+                combined.sort((a, b) => {
+                    if (a.done !== b.done) return a.done - b.done;
                     if (a.done && b.done) {
                         const timeA = parseTime(a.waktu).getTime();
                         const timeB = parseTime(b.waktu).getTime();
-                        return timeB - timeA; 
+                        return timeB - timeA;
                     }
                     return a.nama.localeCompare(b.nama);
                 });
 
                 combined.forEach(item => {
                     let div = document.createElement('div');
-                    if(item.done) {
+                    if (item.done) {
                         let badge = item.status.toLowerCase() === 'hadir' ? 'badge-success text-white' : (item.alasan === 'Sakit' ? 'badge-warning text-black' : (item.alasan === 'Izin' ? 'badge-info text-white' : 'badge-error text-white'));
                         let alasanTxt = item.status.toLowerCase() !== 'hadir' && item.alasan ? ` - ${item.alasan}` : '';
                         div.className = "flex justify-between items-center p-2 rounded-lg bg-base-100 border border-base-200 opacity-70 transition-all";
@@ -653,13 +594,13 @@
             showView('scannerView');
             const readerContainer = document.getElementById('readerContainer');
             readerContainer.classList.remove('scan-error', 'scan-warning', 'scan-success');
-            
-            if(!html5QrcodeScanner) {
+
+            if (!html5QrcodeScanner) {
                 html5QrcodeScanner = new Html5Qrcode("reader");
             }
-            
+
             setTimeout(() => {
-                if(!html5QrcodeScanner.isScanning) {
+                if (!html5QrcodeScanner.isScanning) {
                     html5QrcodeScanner.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 250 } }, onScanSuccess).catch(e => {
                         showModal('Kamera Error', 'Izinkan akses kamera di browser/aplikasi Anda.', null, true);
                         goBack();
@@ -675,26 +616,26 @@
         }
 
         async function onScanSuccess(decodedText) {
-            if(isScannerPaused) return;
+            if (isScannerPaused) return;
             isScannerPaused = true;
 
             const readerContainer = document.getElementById('readerContainer');
             const scannedName = decodedText.trim();
             // Pembersihan nama agar tahan gelar (insensitive)
             const matchedGuru = dbTeachers.find(g => g.nama.trim().toLowerCase() === scannedName.toLowerCase());
-            
-            if(dbTeachers.length > 0 && !matchedGuru) {
+
+            if (dbTeachers.length > 0 && !matchedGuru) {
                 readerContainer.classList.add('scan-error');
                 showToast("Nama tidak dikenali / salah QR!", "error");
-                
-                setTimeout(() => { 
+
+                setTimeout(() => {
                     readerContainer.classList.remove('scan-error');
-                    isScannerPaused = false; 
+                    isScannerPaused = false;
                 }, 1500);
                 return;
             }
 
-            const finalName = matchedGuru ? matchedGuru.nama : scannedName; 
+            const finalName = matchedGuru ? matchedGuru.nama : scannedName;
 
             let isDupe = todayRecords.some(r => r.nama === finalName);
             const pendings = await getOffline();
@@ -703,21 +644,21 @@
             if (isDupe) {
                 readerContainer.classList.add('scan-warning');
                 showToast(`${finalName} sudah absen hari ini!`, 'warning');
-                
-                setTimeout(() => { 
+
+                setTimeout(() => {
                     readerContainer.classList.remove('scan-warning');
-                    isScannerPaused = false; 
+                    isScannerPaused = false;
                 }, 1500);
                 return;
             }
 
             readerContainer.classList.add('scan-success');
-            
+
             showModal('Konfirmasi Kehadiran', `Apakah benar ${finalName} hadir?`, async () => {
                 const timeStr = getExactTimestamp(); // Waktu detail saat Yes ditekan
                 const payload = { nama: finalName, status: 'Hadir', alasan: '', adminName: globalAdminName, waktu: timeStr };
-                
-                if(!isOnline) {
+
+                if (!isOnline) {
                     await saveOffline([payload]);
                     updateNetworkUI();
                     showToast(`${finalName} tersimpan offline`, 'success');
@@ -725,9 +666,9 @@
                     callAPI('submitAttendance', [payload]).catch(e => saveOffline([payload]));
                     showToast(`${finalName} berhasil hadir!`, 'success');
                 }
-                
+
                 todayRecords.push(payload);
-                
+
                 setTimeout(() => {
                     readerContainer.classList.remove('scan-success');
                     isScannerPaused = false;
@@ -763,7 +704,7 @@
 
         function renderChecklist(filterText = "") {
             const cont = document.getElementById('checklistContainer');
-            if(dbTeachers.length === 0) {
+            if (dbTeachers.length === 0) {
                 cont.innerHTML = '<div class="text-center text-sm opacity-50 mt-4">Database kosong. Pastikan online.</div>';
                 return;
             }
@@ -773,9 +714,9 @@
                 return { ...guru, done };
             }).filter(g => !g.done);
 
-            if(filterText) combined = combined.filter(g => g.nama.toLowerCase().includes(filterText.toLowerCase()));
+            if (filterText) combined = combined.filter(g => g.nama.toLowerCase().includes(filterText.toLowerCase()));
 
-            if(combined.length === 0) {
+            if (combined.length === 0) {
                 cont.innerHTML = '<div class="text-center text-sm opacity-50 mt-4">Semua guru (di pencarian ini) sudah absen.</div>';
                 updateSelectedCount();
                 return;
@@ -786,7 +727,7 @@
                 let div = document.createElement('label');
                 div.className = "flex items-center gap-3 p-3 border-b border-base-200 cursor-pointer hover:bg-base-200 transition-colors guru-item";
                 div.dataset.nama = item.nama; div.dataset.ket = item.keterangan.toLowerCase();
-                
+
                 div.innerHTML = `<input type="checkbox" class="checkbox checkbox-success checkbox-sm cb-guru" onchange="updateSelectedCount()" value="${item.nama}">
                                  <div><p class="text-sm font-semibold leading-tight">${item.nama}</p><p class="text-[10px] opacity-60">${item.keterangan}</p></div>`;
                 cont.appendChild(div);
@@ -798,7 +739,7 @@
 
         function toggleFilter(type, btnObj) {
             const isActive = btnObj.classList.contains('btn-success');
-            
+
             if (isActive) {
                 btnObj.classList.remove('btn-success', 'text-white', 'bg-emerald-500', 'border-0'); btnObj.classList.add('btn-outline');
             } else {
@@ -811,13 +752,13 @@
                 let nama = item.dataset.nama.toLowerCase();
                 let ket = item.dataset.ket;
                 let isMatch = false;
-                
-                if(type === 'ikhwan' && ket.includes('ikhwan')) isMatch = true;
-                else if(type === 'akhwat' && ket.includes('akhwat')) isMatch = true;
-                else if(type === 'ust' && (nama.startsWith('ust.') || nama.startsWith('ustadz '))) isMatch = true;
-                else if(type === 'usth' && (nama.startsWith('usth.') || nama.startsWith('ustadzah '))) isMatch = true;
-                else if(type === 'akh' && nama.startsWith('akh.')) isMatch = true;
-                else if(type === 'ukh' && (nama.startsWith('ukh.') || nama.startsWith('ukhti '))) isMatch = true;
+
+                if (type === 'ikhwan' && ket.includes('ikhwan')) isMatch = true;
+                else if (type === 'akhwat' && ket.includes('akhwat')) isMatch = true;
+                else if (type === 'ust' && (nama.startsWith('ust.') || nama.startsWith('ustadz '))) isMatch = true;
+                else if (type === 'usth' && (nama.startsWith('usth.') || nama.startsWith('ustadzah '))) isMatch = true;
+                else if (type === 'akh' && nama.startsWith('akh.')) isMatch = true;
+                else if (type === 'ukh' && (nama.startsWith('ukh.') || nama.startsWith('ukhti '))) isMatch = true;
 
                 if (isMatch) cb.checked = !isActive;
             });
@@ -825,7 +766,7 @@
         }
 
         function filterSelect(type) {
-            if(type === 'clear') {
+            if (type === 'clear') {
                 document.querySelectorAll('.filter-btn').forEach(b => { b.classList.remove('btn-success', 'text-white', 'bg-emerald-500', 'border-0'); b.classList.add('btn-outline'); });
                 document.querySelectorAll('.cb-guru').forEach(cb => cb.checked = false);
             }
@@ -844,11 +785,11 @@
 
         async function submitBulk() {
             const checkedBoxes = document.querySelectorAll('.cb-guru:checked');
-            if(checkedBoxes.length === 0) return showToast('Pilih minimal 1 guru!', 'warning');
+            if (checkedBoxes.length === 0) return showToast('Pilih minimal 1 guru!', 'warning');
 
             const status = document.querySelector('input[name="bulkStatus"]:checked').value;
             const alasan = document.getElementById('bulkAlasan').value;
-            if(status === "Tidak Hadir" && !alasan) return showToast('Pilih alasan absen!', 'warning');
+            if (status === "Tidak Hadir" && !alasan) return showToast('Pilih alasan absen!', 'warning');
 
             const btn = document.getElementById('btnBulk');
             const originalText = btn.innerHTML;
@@ -856,23 +797,23 @@
 
             const timeStr = getExactTimestamp(); // Waktu serentak
             let payloads = [];
-            
-            checkedBoxes.forEach(cb => { 
-                payloads.push({ nama: cb.value, status, alasan, adminName: globalAdminName, waktu: timeStr }); 
+
+            checkedBoxes.forEach(cb => {
+                payloads.push({ nama: cb.value, status, alasan, adminName: globalAdminName, waktu: timeStr });
             });
 
-            if(!isOnline) {
+            if (!isOnline) {
                 await saveOffline(payloads); updateNetworkUI();
-                showToast(`Tersimpan Offline (${payloads.length} data)`, 'success'); 
+                showToast(`Tersimpan Offline (${payloads.length} data)`, 'success');
                 resetBulkForm();
             } else {
                 try {
                     const res = await callAPI('submitAttendance', payloads);
-                    if(res.success) { showToast(res.message, 'success'); resetBulkForm(); }
+                    if (res.success) { showToast(res.message, 'success'); resetBulkForm(); }
                     else showModal('Gagal', res.message, null, true);
-                } catch(e) {
+                } catch (e) {
                     await saveOffline(payloads); updateNetworkUI();
-                    showToast('Tersimpan offline.', 'warning'); 
+                    showToast('Tersimpan offline.', 'warning');
                     resetBulkForm();
                 }
             }
@@ -882,17 +823,24 @@
         function resetBulkForm() {
             document.getElementById('searchManual').value = "";
             document.querySelector('input[name="bulkStatus"][value="Hadir"]').checked = true;
-            toggleBulkAlasan(); 
-            filterSelect('clear'); 
-            
+            toggleBulkAlasan();
+            filterSelect('clear');
+
             const timeStr = getExactTimestamp();
             const checkedBoxes = document.querySelectorAll('.cb-guru:checked');
             checkedBoxes.forEach(cb => {
-                todayRecords.push({nama: cb.value, status: document.querySelector('input[name="bulkStatus"]:checked').value, alasan: document.getElementById('bulkAlasan').value, waktu: timeStr});
+                todayRecords.push({ nama: cb.value, status: document.querySelector('input[name="bulkStatus"]:checked').value, alasan: document.getElementById('bulkAlasan').value, waktu: timeStr });
             });
-            
+
             goBack();
         }
     </script>
+    <!-- 1. Panggil library Supabase dulu -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- 2. Panggil api.js (karena butuh library Supabase) -->
+    <script src="assets/js/api.js"></script>
+    <!-- 3. Panggil app.js (berisi logika tampilan yang nanti kita pisah) -->
+    <script src="assets/js/app.js"></script>
 </body>
+
 </html>

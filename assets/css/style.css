@@ -1,0 +1,56 @@
+/* assets/css/style.css */
+html,
+body {
+  min-height: 100%;
+}
+body {
+  font-family: "Inter", sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+.hide {
+  display: none !important;
+}
+
+#reader {
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+.scan-success #reader__scan_region div {
+  border-color: #10b981 !important;
+  transition: border-color 0.3s ease;
+}
+.scan-error #reader__scan_region div {
+  border-color: #f87171 !important;
+  transition: border-color 0.3s ease;
+}
+.scan-warning #reader__scan_region div {
+  border-color: #fbbf24 !important;
+  transition: border-color 0.3s ease;
+}
+
+.list-guru-container {
+  max-height: calc(100dvh - 420px);
+  overflow-y: auto;
+}
+#checklistContainer {
+  max-height: calc(100dvh - 380px);
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+}
+
+.fade-in {
+  animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: opacity, transform;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
