@@ -191,8 +191,8 @@
         <div class="card bg-base-100 shadow-xl border border-base-300">
             <div class="card-body p-4 relative" id="readerContainer">
                 <h2 class="font-bold text-center mb-3 text-lg">Scan QR Code</h2>
-                <div class="relative rounded-xl overflow-hidden mb-3 bg-base-200 min-h-[280px]">
-                    <div id="reader" class="w-full relative"></div>
+                <div class="relative rounded-xl overflow-hidden mb-3 bg-base-200 aspect-square">
+                    <div id="reader" class="w-full h-full relative"></div>
                 </div>
                 <p class="text-xs text-center opacity-70 mb-4">Kamera siap. Arahkan ke QR Code.</p>
                 <button onclick="stopScanner(); goBack()" class="btn btn-error text-white w-full border-0 shadow-md"><i
@@ -224,7 +224,7 @@
                     <button type="button" onclick="toggleFilter('ukh', this)"
                         class="btn btn-xs btn-outline border-base-300 rounded-full filter-btn">Ukh</button>
                     <button type="button" onclick="filterSelect('clear')"
-                        class="btn btn-xs btn-error text-white border-0 shadow-sm rounded-full ml-auto">Reset</button>
+                        class="btn btn-xs btn-error text-white border-0 shadow-sm rounded-full">Reset</button>
                 </div>
                 <input type="text" id="searchManual" oninput="searchChecklist()"
                     class="input input-sm input-bordered bg-base-200 focus:border-success focus:ring-1 focus:ring-success w-full transition-colors"
