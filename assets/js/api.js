@@ -37,7 +37,7 @@ async function callAPI(action, payload) {
             if (error) throw error;
             
             const formattedData = data.map(item => ({
-                waktu: new Date(item.waktu).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+                waktu: new Date(item.waktu).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
                 nama: item.nama,
                 status: item.status,
                 alasan: item.alasan || "",
