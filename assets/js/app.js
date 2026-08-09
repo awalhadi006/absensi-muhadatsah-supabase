@@ -8,6 +8,7 @@ let todayRecords = [];
 let isOnline = navigator.onLine;
 let html5QrcodeScanner;
 let isScannerPaused = false;
+let activeDashboardFilter = 'all'; // Menyimpan state filter saat ini
 
 // ==========================================
 // 2. MANAJEMEN TEMA (DARK/LIGHT)
@@ -300,10 +301,33 @@ async function silentFetchDashboard() {
     }
 }
 
+// Fungsi baru untuk dipanggil saat kotak statis diklik
+function filterDashboardList(status) {
+    // Jika filter yang diklik sama dengan yang aktif, maka reset (all). Jika beda, gunakan filter baru.
+    activeDashboardFilter = (activeDashboardFilter === status) ? 'all' : status;
+    renderSmartList();
+}
+
 function renderSmartList() {
     const cont = document.getElementById('smartListContainer');
-    if(dbTeachers.length === 0) return;
+    if (dbTeachers.length === 0) return;
     
+    // --- PENGECEKAN HARI LIBUR & ADMIN BYPASS ---
+    const hariIni = new Date().getDay(); // 0 = Minggu, 5 = Jumat, 6 = Sabtu
+    const isLibur = hariIni === 5 || hariIni === 6 || hariIni === 0;
+    const isAdmin = globalAdminName.toLowerCase() === 'admin'; 
+
+    if (isLibur && !isAdmin) {
+        cont.innerHTML = `
+            <div class="flex flex-col items-center justify-center h-full w-full opacity-70 p-4 text-center mt-6">
+                <i class="fa-solid fa-mug-hot text-4xl mb-2 text-base-300"></i>
+                <p class="font-bold text-sm">Kegiatan Muhadatsah Libur</p>
+                <p class="text-[10px]">Silakan menikmati akhir pekan!</p>
+            </div>`;
+        return;
+    }
+    // --------------------------------------------
+
     cont.innerHTML = '';
     let stats = { h:0, s:0, i:0, a:0, belum:0 };
     
@@ -315,27 +339,46 @@ function renderSmartList() {
     getOffline().then(pendings => {
         let offNames = pendings.map(p => p.nama);
         combined.forEach(item => {
-            if(offNames.includes(item.nama)) {
+            if (offNames.includes(item.nama)) {
                 let op = pendings.find(p=>p.nama === item.nama);
                 item.done = true; item.status = op.status; item.alasan = op.alasan; item.waktu = "⏳ Offline";
             }
-            if(!item.done) stats.belum++;
+            if (!item.done) stats.belum++;
             else {
                 let st = item.status.toLowerCase();
+                let al = item.alasan ? item.alasan.toLowerCase() : '';
                 if(st === 'hadir') stats.h++;
-                else if(item.alasan.toLowerCase() === 'izin') stats.i++;
-                else if(item.alasan.toLowerCase() === 'sakit') stats.s++;
+                else if(al === 'izin') stats.i++;
+                else if(al === 'sakit') stats.s++;
                 else stats.a++;
             }
         });
 
+        // Update kotak angka di atas
         document.getElementById('statHadir').innerText = stats.h;
         document.getElementById('statIzin').innerText = stats.i;
         document.getElementById('statSakit').innerText = stats.s;
         document.getElementById('statAlfa').innerText = stats.a;
         document.getElementById('statBelum').innerText = `${stats.belum} Belum`;
 
-        combined.sort((a,b) => {
+        // --- LOGIKA FILTER ---
+        let filteredCombined = combined;
+        if (activeDashboardFilter !== 'all') {
+            filteredCombined = combined.filter(item => {
+                if (!item.done) return false; // Abaikan yang belum absen
+                let st = item.status.toLowerCase();
+                let al = item.alasan ? item.alasan.toLowerCase() : '';
+                
+                if (activeDashboardFilter === 'hadir') return st === 'hadir';
+                if (activeDashboardFilter === 'izin') return al === 'izin';
+                if (activeDashboardFilter === 'sakit') return al === 'sakit';
+                if (activeDashboardFilter === 'alfa') return al === 'alfa' || st === 'alfa';
+                return true;
+            });
+        }
+        // ---------------------
+
+        filteredCombined.sort((a,b) => {
             if (a.done !== b.done) return a.done - b.done; 
             if (a.done && b.done) {
                 const timeA = parseTime(a.waktu).getTime();
@@ -345,7 +388,7 @@ function renderSmartList() {
             return a.nama.localeCompare(b.nama);
         });
 
-        combined.forEach(item => {
+        filteredCombined.forEach(item => {
             let div = document.createElement('div');
             if(item.done) {
                 let badge = item.status.toLowerCase() === 'hadir' ? 'badge-success text-white' : (item.alasan === 'Sakit' ? 'badge-warning text-black' : (item.alasan === 'Izin' ? 'badge-info text-white' : 'badge-error text-white'));
@@ -364,6 +407,11 @@ function renderSmartList() {
             }
             cont.appendChild(div);
         });
+        
+        // Tampilkan pesan kosong jika filter tidak menghasilkan apa-apa
+        if(filteredCombined.length === 0 && activeDashboardFilter !== 'all') {
+            cont.innerHTML = `<div class="text-center text-xs opacity-50 mt-10">Tidak ada data untuk status: ${activeDashboardFilter.toUpperCase()}</div>`;
+        }
     });
 }
 
@@ -406,16 +454,11 @@ async function onScanSuccess(decodedText) {
     if(dbTeachers.length > 0 && !matchedGuru) {
         readerContainer.classList.add('scan-error');
         showToast("Nama tidak dikenali / salah QR!", "error");
-        
-        setTimeout(() => { 
-            readerContainer.classList.remove('scan-error');
-            isScannerPaused = false; 
-        }, 1500);
+        setTimeout(() => { readerContainer.classList.remove('scan-error'); isScannerPaused = false; }, 1500);
         return;
     }
 
     const finalName = matchedGuru ? matchedGuru.nama : scannedName; 
-
     let isDupe = todayRecords.some(r => r.nama === finalName);
     const pendings = await getOffline();
     if (pendings.some(p => p.nama === finalName)) isDupe = true;
@@ -423,39 +466,31 @@ async function onScanSuccess(decodedText) {
     if (isDupe) {
         readerContainer.classList.add('scan-warning');
         showToast(`${finalName} sudah absen hari ini!`, 'warning');
-        
-        setTimeout(() => { 
-            readerContainer.classList.remove('scan-warning');
-            isScannerPaused = false; 
-        }, 1500);
+        setTimeout(() => { readerContainer.classList.remove('scan-warning'); isScannerPaused = false; }, 1500);
         return;
     }
 
+    // --- LANGSUNG SUBMIT KE DATABASE (Auto-Submit) ---
     readerContainer.classList.add('scan-success');
+    const timeStr = getExactTimestamp();
+    const payload = { nama: finalName, status: 'Hadir', alasan: '', adminName: globalAdminName, waktu: timeStr };
     
-    showModal('Konfirmasi Kehadiran', `Apakah benar ${finalName} hadir?`, async () => {
-        const timeStr = getExactTimestamp();
-        const payload = { nama: finalName, status: 'Hadir', alasan: '', adminName: globalAdminName, waktu: timeStr };
-        
-        if(!isOnline) {
-            await saveOffline([payload]);
-            updateNetworkUI();
-            showToast(`${finalName} tersimpan offline`, 'success');
-        } else {
-            callAPI('submitAttendance', [payload]).catch(e => saveOffline([payload]));
-            showToast(`${finalName} berhasil hadir!`, 'success');
-        }
-        
-        todayRecords.push(payload);
-        
-        setTimeout(() => {
-            readerContainer.classList.remove('scan-success');
-            isScannerPaused = false;
-        }, 500);
-    }, false, () => {
+    if(!isOnline) {
+        await saveOffline([payload]);
+        updateNetworkUI();
+        showToast(`${finalName} otomatis hadir (Tersimpan Offline)`, 'success');
+    } else {
+        callAPI('submitAttendance', [payload]).catch(e => saveOffline([payload]));
+        showToast(`${finalName} berhasil absen!`, 'success');
+    }
+    
+    todayRecords.push(payload);
+    
+    // Jeda 1 detik agar scanner tidak langsung men-scan kode yang sama berkali-kali
+    setTimeout(() => {
         readerContainer.classList.remove('scan-success');
         isScannerPaused = false;
-    });
+    }, 1000);
 }
 
 // ==========================================
@@ -566,9 +601,22 @@ async function submitBulk() {
     const originalText = btn.innerHTML;
     btn.innerHTML = '<span class="loading loading-spinner loading-sm"></span> Menyimpan...'; btn.disabled = true;
 
-    const timeStr = getExactTimestamp(); 
-    let payloads = [];
+    // --- LOGIKA MENGAMBIL TANGGAL MANUAL ---
+    const dateInput = document.getElementById('manualDate').value;
+    let timeStr;
     
+    if (dateInput) {
+        // Jika ada input (YYYY-MM-DD), ubah ke MM/DD/YYYY agar konsisten dengan getExactTimestamp()
+        const [yyyy, mm, dd] = dateInput.split('-');
+        const now = new Date();
+        timeStr = `${mm}/${dd}/${yyyy} ${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+    } else {
+        // Jika kosong, gunakan waktu persis detik ini
+        timeStr = getExactTimestamp(); 
+    }
+    // ---------------------------------------
+    
+    let payloads = [];
     checkedBoxes.forEach(cb => { 
         payloads.push({ nama: cb.value, status, alasan, adminName: globalAdminName, waktu: timeStr }); 
     });
@@ -576,28 +624,29 @@ async function submitBulk() {
     if(!isOnline) {
         await saveOffline(payloads); updateNetworkUI();
         showToast(`Tersimpan Offline (${payloads.length} data)`, 'success'); 
-        resetBulkForm();
+        resetBulkForm(timeStr); // Lempar timeStr ke fungsi reset
     } else {
         try {
             const res = await callAPI('submitAttendance', payloads);
-            if(res.success) { showToast(res.message, 'success'); resetBulkForm(); }
+            if(res.success) { showToast(res.message, 'success'); resetBulkForm(timeStr); }
             else showModal('Gagal', res.message, null, true);
         } catch(e) {
             await saveOffline(payloads); updateNetworkUI();
             showToast('Tersimpan offline.', 'warning'); 
-            resetBulkForm();
+            resetBulkForm(timeStr);
         }
     }
     btn.innerHTML = originalText; btn.disabled = false;
 }
 
-function resetBulkForm() {
+// Jangan lupa timpa juga fungsi resetBulkForm agar menerima parameter tanggal
+function resetBulkForm(timeStr) {
     document.getElementById('searchManual').value = "";
+    document.getElementById('manualDate').value = ""; // Bersihkan kolom tanggal
     document.querySelector('input[name="bulkStatus"][value="Hadir"]').checked = true;
     toggleBulkAlasan(); 
     filterSelect('clear'); 
     
-    const timeStr = getExactTimestamp();
     const checkedBoxes = document.querySelectorAll('.cb-guru:checked');
     checkedBoxes.forEach(cb => {
         todayRecords.push({nama: cb.value, status: document.querySelector('input[name="bulkStatus"]:checked').value, alasan: document.getElementById('bulkAlasan').value, waktu: timeStr});
