@@ -13,6 +13,10 @@
 
     <title>Absensi Guru</title>
     <link rel="icon" href="logo.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link rel="stylesheet" href="assets/css/style.css">
 
     <!-- CSS & Libraries -->
@@ -50,7 +54,7 @@
 </head>
 
 <body
-    class="bg-base-200 text-base-content antialiased min-h-[100dvh] flex flex-col items-center transition-colors duration-300 relative">
+    class="bg-base-200 text-base-content antialiased min-h-[100dvh] h-[100dvh] overflow-hidden flex flex-col items-center transition-colors duration-300 relative">
 
     <button onclick="toggleTheme()" class="btn btn-circle btn-ghost absolute top-2 right-2 z-50">
         <i id="theme-icon" class="fa-solid fa-moon text-xl opacity-70"></i>
@@ -109,7 +113,7 @@
         </div>
     </div>
 
-    <div id="dashboardView" class="w-full max-w-md flex-1 flex flex-col hide pt-12 pb-4 px-4 fade-in">
+    <div id="dashboardView" class="w-full max-w-md flex-1 min-h-0 flex flex-col hide pt-12 pb-4 px-4 fade-in">
         <div
             class="flex justify-between items-center bg-base-100 p-4 rounded-2xl shadow-sm mb-4 border border-base-300">
             <div>
@@ -169,7 +173,7 @@
             </div>
         </div>
 
-        <div class="card bg-base-100 shadow-sm flex-1 border border-base-300 overflow-hidden flex flex-col">
+        <div class="card bg-base-100 shadow-sm flex-1 min-h-0 border border-base-300 overflow-hidden flex flex-col">
             <div class="bg-base-200 px-4 py-3 flex justify-between items-center border-b border-base-300">
                 <h3 class="font-bold text-sm">Status Guru Hari Ini</h3>
                 <div class="flex items-center gap-2">
@@ -183,11 +187,11 @@
         </div>
     </div>
 
-    <div id="scannerView" class="w-full max-w-md flex-1 flex flex-col justify-center hide fade-in px-4">
+    <div id="scannerView" class="w-full max-w-md flex-1 min-h-0 flex flex-col justify-center hide fade-in px-4">
         <div class="card bg-base-100 shadow-xl border border-base-300">
             <div class="card-body p-4 relative" id="readerContainer">
                 <h2 class="font-bold text-center mb-3 text-lg">Scan QR Code</h2>
-                <div class="relative rounded-xl overflow-hidden mb-3 bg-base-200">
+                <div class="relative rounded-xl overflow-hidden mb-3 bg-base-200 min-h-[280px]">
                     <div id="reader" class="w-full relative"></div>
                 </div>
                 <p class="text-xs text-center opacity-70 mb-4">Kamera siap. Arahkan ke QR Code.</p>
@@ -197,8 +201,8 @@
         </div>
     </div>
 
-    <div id="manualView" class="w-full max-w-md flex-1 flex flex-col hide pt-4 pb-4 px-4 fade-in">
-        <div class="card bg-base-100 shadow-xl flex-1 flex flex-col overflow-hidden border border-base-300">
+    <div id="manualView" class="w-full max-w-md flex-1 min-h-0 flex flex-col hide pt-4 pb-4 px-4 fade-in">
+        <div class="card bg-base-100 shadow-xl flex-1 min-h-0 flex flex-col overflow-hidden border border-base-300">
             <div class="p-4 border-b border-base-300 flex items-center justify-center bg-base-200 relative">
                 <button onclick="goBack()" class="btn btn-sm btn-ghost btn-circle absolute left-2"><i
                         class="fa-solid fa-arrow-left text-lg"></i></button>
@@ -227,7 +231,7 @@
                     placeholder="Cari nama manual...">
             </div>
 
-            <div class="flex-1 overflow-y-auto p-2 bg-base-100" id="checklistContainer">
+            <div class="flex-1 min-h-0 overflow-y-auto p-2 bg-base-100" id="checklistContainer">
                 <div class="text-center text-xs opacity-50 mt-4"><span
                         class="loading loading-spinner loading-xs"></span> Memuat daftar guru...</div>
             </div>
@@ -266,8 +270,8 @@
     </div>
 
     <!-- VIEW BARU: REKAPAN GURU -->
-    <div id="rekapView" class="w-full max-w-md flex-1 flex flex-col hide pt-4 pb-4 px-4 fade-in">
-        <div class="card bg-base-100 shadow-xl flex-1 flex flex-col overflow-hidden border border-base-300">
+    <div id="rekapView" class="w-full max-w-md flex-1 min-h-0 flex flex-col hide pt-4 pb-4 px-4 fade-in">
+        <div class="card bg-base-100 shadow-xl flex-1 min-h-0 flex flex-col overflow-hidden border border-base-300">
             <!-- Header Halaman -->
             <div class="p-4 border-b border-base-300 flex items-center justify-center bg-base-200 relative">
                 <button onclick="goBack()" class="btn btn-sm btn-ghost btn-circle absolute left-2"><i class="fa-solid fa-arrow-left text-lg"></i></button>
@@ -292,7 +296,7 @@
             </div>
 
             <!-- Tempat Data Akan Ditampilkan -->
-            <div class="flex-1 overflow-y-auto p-3 bg-base-200 space-y-2" id="rekapContainer">
+            <div class="flex-1 min-h-0 overflow-y-auto p-3 bg-base-200 space-y-2" id="rekapContainer">
                 <div class="text-center text-sm opacity-50 mt-10">
                     <i class="fa-solid fa-calendar-days text-3xl mb-2"></i><br>
                     Pilih tanggal dan tekan Tampilkan.

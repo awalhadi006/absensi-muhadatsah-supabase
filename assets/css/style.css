@@ -4,7 +4,7 @@ body {
   min-height: 100%;
 }
 body {
-  font-family: "Inter", sans-serif;
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   -webkit-tap-highlight-color: transparent;
 }
 .hide {
@@ -13,6 +13,7 @@ body {
 
 #reader {
   width: 100%;
+  min-height: 280px;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
@@ -31,11 +32,12 @@ body {
 }
 
 .list-guru-container {
-  max-height: calc(100dvh - 420px);
+  flex: 1 1 0%;
+  min-height: 150px;
   overflow-y: auto;
 }
 #checklistContainer {
-  max-height: calc(100dvh - 380px);
+  min-height: 0;
   overflow-y: auto;
   overscroll-behavior-y: contain;
 }
@@ -52,5 +54,15 @@ body {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* Pencegahan layout shift saat kamera scanner aktif */
+
+/* Layar sangat pendek (mis. jendela browser kecil di PC): kembali ke scroll halaman biasa */
+@media (max-height: 520px) {
+  body {
+    height: auto;
+    overflow-y: auto;
   }
 }
