@@ -148,20 +148,21 @@
         -->
         
         <!-- Menambahkan cursor-pointer, hover, dan onclick untuk Filter -->
+        <!-- Menambahkan ID untuk memanipulasi warna background -->
         <div class="grid grid-cols-4 gap-2 mb-4 text-center">
-            <div onclick="filterDashboardList('hadir')" class="bg-base-100 rounded-xl p-2 border border-base-300 shadow-sm cursor-pointer hover:bg-emerald-50 transition-colors">
+            <div id="card-filter-hadir" onclick="filterDashboardList('hadir')" class="bg-base-100 rounded-xl p-2 border border-base-300 shadow-sm cursor-pointer hover:bg-success/10 transition-colors">
                 <div class="text-xl font-bold text-success" id="statHadir">0</div>
                 <div class="text-[10px] opacity-70">Hadir</div>
             </div>
-            <div onclick="filterDashboardList('izin')" class="bg-base-100 rounded-xl p-2 border border-base-300 shadow-sm cursor-pointer hover:bg-blue-50 transition-colors">
+            <div id="card-filter-izin" onclick="filterDashboardList('izin')" class="bg-base-100 rounded-xl p-2 border border-base-300 shadow-sm cursor-pointer hover:bg-success/10 transition-colors">
                 <div class="text-xl font-bold text-info" id="statIzin">0</div>
                 <div class="text-[10px] opacity-70">Izin</div>
             </div>
-            <div onclick="filterDashboardList('sakit')" class="bg-base-100 rounded-xl p-2 border border-base-300 shadow-sm cursor-pointer hover:bg-yellow-50 transition-colors">
+            <div id="card-filter-sakit" onclick="filterDashboardList('sakit')" class="bg-base-100 rounded-xl p-2 border border-base-300 shadow-sm cursor-pointer hover:bg-success/10 transition-colors">
                 <div class="text-xl font-bold text-warning" id="statSakit">0</div>
                 <div class="text-[10px] opacity-70">Sakit</div>
             </div>
-            <div onclick="filterDashboardList('alfa')" class="bg-base-100 rounded-xl p-2 border border-base-300 shadow-sm cursor-pointer hover:bg-red-50 transition-colors">
+            <div id="card-filter-alfa" onclick="filterDashboardList('alfa')" class="bg-base-100 rounded-xl p-2 border border-base-300 shadow-sm cursor-pointer hover:bg-success/10 transition-colors">
                 <div class="text-xl font-bold text-error" id="statAlfa">0</div>
                 <div class="text-[10px] opacity-70">Alfa</div>
             </div>

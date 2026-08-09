@@ -303,8 +303,28 @@ async function silentFetchDashboard() {
 
 // Fungsi baru untuk dipanggil saat kotak statis diklik
 function filterDashboardList(status) {
-    // Jika filter yang diklik sama dengan yang aktif, maka reset (all). Jika beda, gunakan filter baru.
+    // 1. Set status filter aktif atau reset ke 'all' jika diklik ulang
     activeDashboardFilter = (activeDashboardFilter === status) ? 'all' : status;
+    
+    // 2. LOGIKA MENGUBAH WARNA BACKGROUND FILTER
+    const statuses = ['hadir', 'izin', 'sakit', 'alfa'];
+    
+    statuses.forEach(s => {
+        const card = document.getElementById(`card-filter-${s}`);
+        if (card) {
+            if (activeDashboardFilter === s) {
+                // Jika sedang aktif: Hapus warna bawaan, tambahkan background hijau transparan & border hijau
+                card.classList.remove('bg-base-100', 'border-base-300');
+                card.classList.add('bg-success/20', 'border-success');
+            } else {
+                // Jika tidak aktif (kembali normal): Hapus warna hijau, kembalikan ke bawaan
+                card.classList.add('bg-base-100', 'border-base-300');
+                card.classList.remove('bg-success/20', 'border-success');
+            }
+        }
+    });
+    
+    // 3. Render ulang daftar di bawahnya
     renderSmartList();
 }
 
