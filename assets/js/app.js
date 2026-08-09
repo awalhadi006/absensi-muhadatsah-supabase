@@ -306,25 +306,35 @@ function filterDashboardList(status) {
     // 1. Set status filter aktif atau reset ke 'all' jika diklik ulang
     activeDashboardFilter = (activeDashboardFilter === status) ? 'all' : status;
     
-    // 2. LOGIKA MENGUBAH WARNA BACKGROUND FILTER
+    // 2. KAMUS WARNA UNTUK TIAP STATUS
+    const colorMap = {
+        'hadir': { bg: 'bg-success/10', border: 'border-success' }, // Hijau
+        'izin':  { bg: 'bg-info/10',    border: 'border-info' },    // Biru
+        'sakit': { bg: 'bg-warning/10', border: 'border-warning' }, // Kuning
+        'alfa':  { bg: 'bg-error/10',   border: 'border-error' }    // Merah
+    };
+    
     const statuses = ['hadir', 'izin', 'sakit', 'alfa'];
     
+    // 3. LOGIKA MENGUBAH WARNA
     statuses.forEach(s => {
         const card = document.getElementById(`card-filter-${s}`);
         if (card) {
             if (activeDashboardFilter === s) {
-                // Jika sedang aktif: Hapus warna bawaan, tambahkan background hijau transparan & border hijau
+                // Hapus warna bawaan
                 card.classList.remove('bg-base-100', 'border-base-300');
-                card.classList.add('bg-success/20', 'border-success');
+                // Tambahkan warna spesifik sesuai kamus warna
+                card.classList.add(colorMap[s].bg, colorMap[s].border);
             } else {
-                // Jika tidak aktif (kembali normal): Hapus warna hijau, kembalikan ke bawaan
+                // Kembalikan ke normal
                 card.classList.add('bg-base-100', 'border-base-300');
-                card.classList.remove('bg-success/20', 'border-success');
+                // Hapus warna aktif (termasuk bekas class emerald sebelumnya biar bersih)
+                card.classList.remove(colorMap[s].bg, colorMap[s].border, 'bg-emerald-500/10');
             }
         }
     });
     
-    // 3. Render ulang daftar di bawahnya
+    // 4. Render ulang daftar di bawahnya
     renderSmartList();
 }
 
